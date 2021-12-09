@@ -17,8 +17,8 @@ const UserSchema = new Schema({
     default: "USER",
   },
   crmDoctor: {
-    type: String,
-    default: "USER",
+    type: Number,
+    required: true,
   },
 });
 
