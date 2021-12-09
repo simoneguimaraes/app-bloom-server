@@ -16,10 +16,7 @@ const UserSchema = new Schema({
     required: true,
     default: "USER",
   },
-  crmDoctor: {
-    type: Number,
-    required: true,
-  },
+  profileId: { },
 });
 
 const UserModel = model("User", UserSchema);
