@@ -1,101 +1,69 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
-
-const UserModel = require("../models/User.model");
 const generateToken = require("../config/jwt.config");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
+const uploader = require("../config/cloudinary.config");
 
 const salt_rounds = 10;
 
-// Crud (CREATE) - HTTP POST
+const UserModel = require("../models/User.model");
+const PatientProfileModel = require("../models/PatientProfile.model");
+const DoctorProfileModel = require("../models/DoctorProfile.model");
 
-router.post("/signup", async (req, res) => {
-  
-  console.log(req.body);
-
-  try {
-   
-    const { password } = req.body;
-
-    if (
-      !password ||
-      !password.match(
-        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/
-      )
-    ) {
-      return res.status(400).json({
-        msg: "Password is required and must have at least 8 characters, uppercase and lowercase letters, numbers and special characters.",
-      });
+// Crud - HTTP POST
+//POST - criar um perfil
+router.post(
+  "/doctor-info/create",
+  isAuthenticated,
+  attachCurrentUser,
+  async (req, res) => {
+    try {
+      const doctorInfo = await DoctorProfileModel.create({ ...req.body });
+      res.status(201).json(doctorInfo);
+    } catch (err) {
+      console.error(err);
+      // O status 500 signfica Internal Server Error
+      return res.status(500).json({ msg: JSON.stringify(err) });
     }
-
-    const salt = await bcrypt.genSalt(salt_rounds);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const result = await UserModel.create({
-      ...req.body,
-      passwordHash: hashedPassword,
-    });
-
-    return res.status(201).json(result);
-  } catch (err) {
-    console.error(err);
-  
-    return res.status(500).json({ msg: JSON.stringify(err) });
   }
-});
+);
 
-// Login
-router.post("/login", async (req, res) => {
-  try {
+//PATCH - editar um perfil
+router.patch(
+  "/doctor-info/update",
+  isAuthenticated,
+  attachCurrentUser,
+  async (req, res) => {
+    try {
+      const loggedInUser = req.currentUser[1];
 
-    const { email, password } = req.body;
-
-    const user = await UserModel.findOne({ email });
-
-    console.log(user);
-
-    if (!user) {
-      return res
-        .status(400)
-        .json({ msg: "This email is not yet registered in our website;" });
+      if (loggedInUser) {
+        const response = await UserModel.findOneAndUpdate(
+          { _id: loggedInUser._id },
+          { $set: req.body },
+          { new: true, runValidation: true }
+        );
+        return res.status(200).json(response);
+      } else {
+        return res.status(404).json({ msg: "User not found." });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
     }
-
-    if (await bcrypt.compare(password, user.passwordHash)) {
-   
-      const token = generateToken(user);
-
-      return res.status(200).json({
-        user: {
-          name: user.name,
-          email: user.email,
-          _id: user._id,
-          role: user.role,
-        },
-        token,
-      });
-    } else {
-     
-      return res.status(401).json({ msg: "Wrong password or email" });
-    }
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ msg: JSON.stringify(err) });
   }
-});
+);
 
-// cRud (READ) - HTTP GET
-
-router.get("/profile", isAuthenticated, attachCurrentUser, (req, res) => {
-  console.log(req.headers);
-
+//GET - ver o perfil do doutor
+router.get("/doctor-info", isAuthenticated, attachCurrentUser, (req, res) => {
   try {
-    
-    const loggedInUser = req.currentUser;
+    // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
+    const [profile, loggedInUser] = req.currentUser;
 
     if (loggedInUser) {
-    
-      return res.status(200).json(loggedInUser);
+      // Responder o cliente com os dados do usuário. O status 200 significa OK
+      return res.status(200).json(profile, loggedInUser);
     } else {
       return res.status(404).json({ msg: "User not found." });
     }
@@ -104,5 +72,7 @@ router.get("/profile", isAuthenticated, attachCurrentUser, (req, res) => {
     return res.status(500).json({ msg: JSON.stringify(err) });
   }
 });
+
+
 
 module.exports = router;
