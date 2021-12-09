@@ -72,3 +72,7 @@ router.get("/doctor-info", isAuthenticated, attachCurrentUser, (req, res) => {
     return res.status(500).json({ msg: JSON.stringify(err) });
   }
 });
+
+
+
+module.exports = router;
