@@ -1,37 +1,58 @@
 const { Schema, model } = require("mongoose");
 
 const DoctorFormSchema = new Schema({
-  birthdate: {
-    type: Date,
-    required: true,
-  },
-  weight: {
-    type: Number,
-    required: true,
-  },
-  height: {
-    type: Number,
-    required: true,
-  },
-  treatmentStartDate: {
-    type: Date,
-    required: true,
-    default: new Date(),
-    trim: true,
-  },
-  motiveForTreatment: {
+  specialty: {
     type: String,
-    enum: ["Ansiedade", "Depressão", "Outros"],
-    default: "Outros",
+    enum: ["Psiquiatra", "Neurologista", "Outro"],
     required: true,
+    default: "Outro",
   },
-  sleepHours: {
+  crmDoctor: {
     type: Number,
     required: true,
   },
-  weeklyExerciseHours: {
+  prescription: {
+    type: String,
+    enum: ["Sim", "Não"],
+    required: true,
+    default: "Outro",
+  },
+  streetAddress: {
+    type: String,
+    required: true,
+    default: "Outro",
+  },
+  city: {
+    type: String,
+    required: true,
+    default: "Outro",
+  },
+  state: {
+    type: String,
+    required: true,
+    default: "Outro",
+  },
+  phoneNumber: {
     type: Number,
     required: true,
+  },
+  tags: {
+    type: String,
+    enum: [
+      "Doença Degenerativa",
+      "Saúde Mental",
+      "Ansiedade",
+      "Fibromialgia",
+      "Esclerose Múltipla",
+      "Mal de Parkinson",
+      "Epilepsia",
+      "Esquizofrenia",
+      "Glaucoma",
+      "Depressão",
+      "Outro",
+    ],
+    required: true,
+    default: "Outro",
   },
 });
 

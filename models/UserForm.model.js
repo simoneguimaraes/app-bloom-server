@@ -15,13 +15,22 @@ const UserFormSchema = new Schema({
   },
   treatmentStartDate: {
     type: Date,
-    required: true,
     default: new Date(),
     trim: true,
   },
   motiveForTreatment: {
     type: String,
-    enum: ["Ansiedade", "Depressão", "Outros"],
+    enum: [
+      "Ansiedade",
+      "Fibromialgia",
+      "Esclerose Múltipla",
+      "Mal de Parkinson",
+      "Epilepsia",
+      "Esquizofrenia",
+      "Glaucoma",
+      "Depressão",
+      "Outros",
+    ],
     default: "Outros",
     required: true,
   },
@@ -30,6 +39,10 @@ const UserFormSchema = new Schema({
     required: true,
   },
   weeklyExerciseHours: {
+    type: Number,
+    required: true,
+  },
+  profession: {
     type: Number,
     required: true,
   },
