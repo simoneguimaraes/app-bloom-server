@@ -13,15 +13,15 @@ app.use(morgan("dev"));
 // Ligar os roteadores nas instâncias do Express
 const doctorRouter = require("./routes/doctor.routes")
 const userRouter = require("./routes/user.routes")
-const formRouter = require("./routes/form.routes")
+// const formRouter = require("./routes/form.routes")
 
 app.use(cors({ origin: process.env.REACT_APP_URL }));
 
 // Estamos prefixando todos os endpoinst da nossa API com a palavra "api" e uma versão.
 
-app.use(`/api/v${API_VERSION}`, doctorRouter);
-app.use(`/api/v${API_VERSION}`, userRouter);
-app.use(`/api/v${API_VERSION}`, formRouter);
+app.use(`/api`, doctorRouter);
+app.use(`/api`, userRouter);
+// app.use(`/api`, formRouter);
 
 
 
