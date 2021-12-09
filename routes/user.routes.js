@@ -2,6 +2,8 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 
 const UserModel = require("../models/User.model");
+const PatientProfileModel = require("../models/PatientProfile.model");
+
 const generateToken = require("../config/jwt.config");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
@@ -92,11 +94,11 @@ router.post("/login", async (req, res) => {
 router.get("/profile", isAuthenticated, attachCurrentUser, (req, res) => {
   try {
     // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
-    const loggedInUser = req.currentUser;
+    const [profile, loggedInUser] = req.currentUser;
 
     if (loggedInUser) {
       // Responder o cliente com os dados do usuário. O status 200 significa OK
-      return res.status(200).json(loggedInUser);
+      return res.status(200).json(profile, loggedInUser);
     } else {
       return res.status(404).json({ msg: "User not found." });
     }
@@ -112,7 +114,7 @@ router.patch(
   attachCurrentUser,
   async (req, res) => {
     try {
-      const loggedInUser = req.currentUser;
+      const loggedInUser = req.currentUser[1];
 
       if (loggedInUser) {
         const response = await UserModel.findOneAndUpdate(
@@ -137,12 +139,21 @@ router.delete(
   attachCurrentUser,
   async (req, res) => {
     try {
-      // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
-      const loggedInUser = await UserModel.deleteOne({ _id: req.currentUser });
+      if (req.currentUser.role === "PATIENT") {
+        const user = await UserModel.deleteOne({ _id: req.currentUser[1] });
+        const profile = await PatientProfileModel.deleteOne({
+          _id: req.currentUser,
+        });
+      } else {
+        const user = await UserModel.deleteOne({ _id: req.currentUser[1] });
+        const profile = await DoctorProfileModel.deleteOne({
+          _id: req.currentUser,
+        });
+      }
 
-      if (loggedInUser) {
+      if (user && profile) {
         // Responder o cliente com os dados do usuário. O status 200 significa OK
-        return res.status(200).json(loggedInUser);
+        return res.status(200).json({ ...user, ...profile });
       } else {
         return res.status(404).json({ msg: "Usuário não encontrado" });
       }

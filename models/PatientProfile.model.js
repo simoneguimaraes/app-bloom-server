@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const UserFormSchema = new Schema({
+const PatientProfileSchema = new Schema({
   birthdate: {
     type: Date,
     required: true,

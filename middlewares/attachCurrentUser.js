@@ -15,7 +15,22 @@ module.exports = async (req, res, next) => {
       return res.status(400).json({ msg: "User does not exist." });
     }
 
-    req.currentUser = user;
+    if (user.role === "DOCTOR") {
+      const doctorUser = await DoctorProfileModel.findOne(
+        { userId: loggedInUser._id },
+        { passwordHash: 0, __v: 0 }
+      );
+
+      req.currentUser = [doctorUser, user];
+    } else {
+      const patientUser = await PatientProfileModel.findOne(
+        { userId: loggedInUser._id },
+        { passwordHash: 0, __v: 0 }
+      );
+
+      req.currentUser = [patientUser, user];
+    }
+
     return next();
   } catch (err) {
     console.error(err);

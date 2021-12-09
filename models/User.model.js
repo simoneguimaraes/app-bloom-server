@@ -12,9 +12,9 @@ const UserSchema = new Schema({
   passwordHash: { type: String, required: true },
   role: {
     type: String,
-    enum: ["DOCTOR", "USER"],
+    enum: ["DOCTOR", "PATIENT"],
     required: true,
-    default: "USER",
+    default: "PATIENT",
   },
 });
 

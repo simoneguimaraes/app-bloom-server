@@ -36,6 +36,7 @@ const PatientDailyReviewSchema = new Schema({
     required: true,
   },
   userId: { type: Schema.Types.ObjectId, ref: "User" },
+  patientId: { type: Schema.Types.ObjectId, ref: "PatientProfile" },
 });
 
 const PatientDailyReviewModel = model(
