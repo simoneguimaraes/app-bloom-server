@@ -16,7 +16,6 @@ const UserSchema = new Schema({
     required: true,
     default: "USER",
   },
-  profileId: { },
 });
 
 const UserModel = model("User", UserSchema);

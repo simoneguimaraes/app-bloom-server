@@ -34,6 +34,17 @@ const UserFormSchema = new Schema({
     default: "Outros",
     required: true,
   },
+  medicationFrequency: {
+    type: String,
+    enum: [
+      "Todos os dias",
+      "1 a 2 vezes por semana",
+      "De 3 a 4 vezes por semana",
+      "De 4 a 6 vezes por semana",
+    ],
+    default: "Todos os dias",
+    required: true,
+  },
   sleepHours: {
     type: Number,
     required: true,
@@ -46,8 +57,9 @@ const UserFormSchema = new Schema({
     type: Number,
     required: true,
   },
+  userId: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
-const UserModel = model("UserForm", UserFormSchema);
+const PatientProfileModel = model("PatientProfile", PatientProfileSchema);
 
-module.exports = UserFormSchema;
+module.exports = PatientProfileModel;

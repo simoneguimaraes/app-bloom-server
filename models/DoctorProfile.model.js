@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const DoctorFormSchema = new Schema({
+const DoctorProfileSchema = new Schema({
   specialty: {
     type: String,
     enum: ["Psiquiatra", "Neurologista", "Outro"],
@@ -15,7 +15,6 @@ const DoctorFormSchema = new Schema({
     type: String,
     enum: ["Sim", "Não"],
     required: true,
-    default: "Outro",
   },
   streetAddress: {
     type: String,
@@ -54,8 +53,9 @@ const DoctorFormSchema = new Schema({
     required: true,
     default: "Outro",
   },
+  userId: { type: Schema.Types.ObjectId, ref: "User" } 
 });
 
-const DoctorModel = model("DoctorForm", DoctorFormSchema);
+const DoctorProfileModel = model("DoctorProfile", DoctorProfileSchema);
 
-module.exports = DoctorFormSchema;
+module.exports = DoctorProfileModel;
