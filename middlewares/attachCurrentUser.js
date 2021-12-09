@@ -1,4 +1,6 @@
 const UserModel = require("../models/User.model");
+const PatientProfileModel = require("../models/PatientProfile.model");
+const DoctorProfileModel = require("../models/DoctorProfile.model");
 
 module.exports = async (req, res, next) => {
   try {

@@ -38,7 +38,7 @@ router.patch(
         const loggedInUser = req.currentUser[1];
   
         if (loggedInUser) {
-          const response = await UserModel.findOneAndUpdate(
+          const response = await PatientProfileModel.findOneAndUpdate(
             { _id: loggedInUser._id },
             { $set: req.body },
             { new: true, runValidation: true }

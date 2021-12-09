@@ -94,13 +94,15 @@ router.post("/login", async (req, res) => {
 router.get("/profile", isAuthenticated, attachCurrentUser, (req, res) => {
   try {
     // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
-    const [profile, loggedInUser] = req.currentUser;
+    const {profile, loggedInUser} = req.currentUser;
 
     if (loggedInUser) {
       // Responder o cliente com os dados do usuário. O status 200 significa OK
       return res.status(200).json(profile, loggedInUser);
     } else {
+      console.log(req)
       return res.status(404).json({ msg: "User not found." });
+      
     }
   } catch (err) {
     console.error(err);
