@@ -2,7 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const PatientProfileSchema = new Schema({
   birthdate: {
-    type: Date,
+    type: String,
     required: true,
   },
   weight: {
@@ -14,7 +14,7 @@ const PatientProfileSchema = new Schema({
     required: true,
   },
   treatmentStartDate: {
-    type: Date,
+    type: String,
     default: new Date(),
     trim: true,
   },
@@ -54,7 +54,7 @@ const PatientProfileSchema = new Schema({
     required: true,
   },
   profession: {
-    type: Number,
+    type: String,
     required: true,
   },
   userId: { type: Schema.Types.ObjectId, ref: "User" },

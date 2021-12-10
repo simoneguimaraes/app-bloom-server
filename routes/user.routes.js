@@ -91,47 +91,51 @@ router.post("/login", async (req, res) => {
 
 // cRud (READ) - HTTP GET
 // Buscar dados do usuário
-router.get("/profile", isAuthenticated, attachCurrentUser, (req, res) => {
-  try {
-    // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
-    const [profile, loggedInUser] = req.currentUser;
+//estamos usando as rotas de patient e doctor separadas
+// router.get("/profile", isAuthenticated, attachCurrentUser, (req, res) => {
+//   try {
+//     // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
+//     const [profile, loggedInUser] = req.currentUser;
+//     console.log(req.loggedInUser)
+//     if (loggedInUser) {
+//       // Responder o cliente com os dados do usuário. O status 200 significa OK
+//       return res.status(200).json({profile, loggedInUser});
+//     } else {
 
-    if (loggedInUser) {
-      // Responder o cliente com os dados do usuário. O status 200 significa OK
-      return res.status(200).json(profile, loggedInUser);
-    } else {
-      return res.status(404).json({ msg: "User not found." });
-    }
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ msg: JSON.stringify(err) });
-  }
-});
+//       return res.status(404).json({ msg: "User not found." });
 
-router.patch(
-  "/profile/update",
-  isAuthenticated,
-  attachCurrentUser,
-  async (req, res) => {
-    try {
-      const loggedInUser = req.currentUser[1];
+//     }
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).json({ msg: JSON.stringify(err) });
+//   }
+// });
 
-      if (loggedInUser) {
-        const response = await UserModel.findOneAndUpdate(
-          { _id: loggedInUser._id },
-          { $set: req.body },
-          { new: true, runValidation: true }
-        );
-        return res.status(200).json(response);
-      } else {
-        return res.status(404).json({ msg: "User not found." });
-      }
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ msg: JSON.stringify(err) });
-    }
-  }
-);
+//estamos usando as rotas de patient e doctor separadas
+// router.patch(
+//   "/profile/update",
+//   isAuthenticated,
+//   attachCurrentUser,
+//   async (req, res) => {
+//     try {
+//       const loggedInUser = req.currentUser[1];
+
+//       if (loggedInUser) {
+//         const response = await UserModel.findOneAndUpdate(
+//           { _id: loggedInUser._id },
+//           { $set: req.body },
+//           { new: true, runValidation: true }
+//         );
+//         return res.status(200).json(response);
+//       } else {
+//         return res.status(404).json({ msg: "User not found." });
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       return res.status(500).json({ msg: JSON.stringify(err) });
+//     }
+//   }
+// );
 
 router.delete(
   "/profile/delete",
@@ -144,7 +148,7 @@ router.delete(
         const profile = await PatientProfileModel.deleteOne({
           _id: req.currentUser,
         });
-      } else {
+      } else if (req.currentUser.role === "DOCTOR") {
         const user = await UserModel.deleteOne({ _id: req.currentUser[1] });
         const profile = await DoctorProfileModel.deleteOne({
           _id: req.currentUser,
@@ -153,7 +157,7 @@ router.delete(
 
       if (user && profile) {
         // Responder o cliente com os dados do usuário. O status 200 significa OK
-        return res.status(200).json({ ...user, ...profile });
+        return res.status(200).json({ msg: "Conta deletada com sucesso." });
       } else {
         return res.status(404).json({ msg: "Usuário não encontrado" });
       }

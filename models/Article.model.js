@@ -1,0 +1,1 @@
+//criar um modelo Schema de como seria um artigo postado pelo médico
