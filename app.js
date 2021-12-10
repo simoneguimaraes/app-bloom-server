@@ -9,10 +9,11 @@ const app = express(); //instanciar express
 app.use(express.json());
 app.use(morgan("dev"));
 
-
 // Ligar os roteadores nas instâncias do Express
-const doctorRouter = require("./routes/doctor.routes")
-const userRouter = require("./routes/user.routes")
+const doctorRouter = require("./routes/doctor.routes");
+const patientRouter = require("./routes/patient.routes");
+const userRouter = require("./routes/user.routes");
+
 // const formRouter = require("./routes/form.routes")
 
 app.use(cors({ origin: process.env.REACT_APP_URL }));
@@ -21,9 +22,8 @@ app.use(cors({ origin: process.env.REACT_APP_URL }));
 
 app.use(`/api`, doctorRouter);
 app.use(`/api`, userRouter);
+app.use(`/api`, patientRouter);
 // app.use(`/api`, formRouter);
-
-
 
 //escutar requisições em uma porta específica
 app.listen(Number(process.env.PORT), () =>

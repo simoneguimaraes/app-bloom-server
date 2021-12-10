@@ -17,7 +17,10 @@ router.post(
   attachCurrentUser,
   async (req, res) => {
     try {
-      const patientInfo = await PatientProfileModel.create({ ...req.body });
+      const patientInfo = await PatientProfileModel.create({
+        ...req.body,
+        userId: req.currentUser[1]._id,
+      });
       res.status(201).json(patientInfo);
     } catch (err) {
       console.error(err);
@@ -30,40 +33,20 @@ router.post(
 /////////////////////////////--------------------------------
 //PATCH - editar um perfil
 router.patch(
-    "/patient-info/update",
-    isAuthenticated,
-    attachCurrentUser,
-    async (req, res) => {
-      try {
-        const loggedInUser = req.currentUser[1];
-  
-        if (loggedInUser) {
-          const response = await PatientProfileModel.findOneAndUpdate(
-            { _id: loggedInUser._id },
-            { $set: req.body },
-            { new: true, runValidation: true }
-          );
-          return res.status(200).json(response);
-        } else {
-          return res.status(404).json({ msg: "User not found." });
-        }
-      } catch (err) {
-        console.error(err);
-        return res.status(500).json({ msg: JSON.stringify(err) });
-      }
-    }
-  );
-
-
-//GET - ver o perfil do paciente
-router.get("/patient-info", isAuthenticated, attachCurrentUser, (req, res) => {
+  "/patient-info/update",
+  isAuthenticated,
+  attachCurrentUser,
+  async (req, res) => {
     try {
-      // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
-      const [profile, loggedInUser] = req.currentUser;
-  
+      const loggedInUser = req.currentUser[1];
+
       if (loggedInUser) {
-        // Responder o cliente com os dados do usuário. O status 200 significa OK
-        return res.status(200).json(profile, loggedInUser);
+        const response = await PatientProfileModel.findOneAndUpdate(
+          { _id: loggedInUser._id },
+          { $set: req.body },
+          { new: true, runValidation: true }
+        );
+        return res.status(200).json(response);
       } else {
         return res.status(404).json({ msg: "User not found." });
       }
@@ -71,9 +54,25 @@ router.get("/patient-info", isAuthenticated, attachCurrentUser, (req, res) => {
       console.error(err);
       return res.status(500).json({ msg: JSON.stringify(err) });
     }
-  });
-  
+  }
+);
 
+//GET - ver o perfil do paciente
+router.get("/patient-info", isAuthenticated, attachCurrentUser, (req, res) => {
+  try {
+    // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
+    const [profile, loggedInUser] = req.currentUser;
 
+    if (loggedInUser) {
+      // Responder o cliente com os dados do usuário. O status 200 significa OK
+      return res.status(200).json(profile, loggedInUser);
+    } else {
+      return res.status(404).json({ msg: "User not found." });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: JSON.stringify(err) });
+  }
+});
 
 module.exports = router;

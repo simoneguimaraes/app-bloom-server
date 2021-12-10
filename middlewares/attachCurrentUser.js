@@ -24,12 +24,12 @@ module.exports = async (req, res, next) => {
       );
 
       req.currentUser = [doctorUser, user];
-    } else {
+    } else if (user.role === "PATIENT") {
       const patientUser = await PatientProfileModel.findOne(
         { userId: loggedInUser._id },
         { passwordHash: 0, __v: 0 }
       );
-
+        console.log(patientUser)
       req.currentUser = [patientUser, user];
     }
 

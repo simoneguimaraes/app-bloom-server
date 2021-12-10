@@ -19,7 +19,6 @@ const DoctorProfileSchema = new Schema({
   streetAddress: {
     type: String,
     required: true,
-    default: "Outro",
   },
   city: {
     type: String,
