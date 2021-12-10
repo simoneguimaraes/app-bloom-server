@@ -8,18 +8,21 @@ const uploader = require("../config/cloudinary.config");
 const salt_rounds = 10;
 
 const UserModel = require("../models/User.model");
-const PatientProfileModel = require("../models/PatientProfile.model");
+const DoctorProfileModel = require("../models/DoctorProfile.model");
 // Crud - HTTP POST
 //POST - criar um perfil
 router.post(
-  "/patient-info/create",
+  "/doctor-info/create",
   isAuthenticated,
   attachCurrentUser,
   async (req, res) => {
     try {
       const [profile, user] = req.currentUser;
-
-      const foundProfile = await PatientProfileModel.findOne({
+      if (loggedInUser.role === "PATIENT") {
+        //verifica se o usuário é paciente mesmo
+        return res.status(400).json({ msg: "Esse usuário não é médico." });
+      }
+      const foundProfile = await DoctorProfileModel.findOne({
         userId: user._id,
       });
       if (foundProfile) {
@@ -27,11 +30,11 @@ router.post(
           .status(400)
           .json({ msg: "O usuário já possui o perfil cadastrado." });
       }
-      const patientInfo = await PatientProfileModel.create({
+      const doctorInfo = await DoctorProfileModel.create({
         ...req.body,
         userId: req.currentUser[1]._id,
       });
-      res.status(201).json(patientInfo);
+      res.status(201).json(doctorInfo);
     } catch (err) {
       console.error(err);
       // O status 500 signfica Internal Server Error
@@ -41,13 +44,13 @@ router.post(
 );
 
 //GET - ver o perfil do paciente
-router.get("/patient-info", isAuthenticated, attachCurrentUser, (req, res) => {
+router.get("/doctor-info", isAuthenticated, attachCurrentUser, (req, res) => {
   try {
     // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
     const [profile, loggedInUser] = req.currentUser;
-    if (loggedInUser.role === "DOCTOR") {
+    if (loggedInUser.role === "PATIENT") {
       //verifica se o usuário é paciente mesmo
-      return res.status(400).json({ msg: "Esse usuário não é paciente." });
+      return res.status(400).json({ msg: "Esse usuário não é médico." });
     }
     if (loggedInUser && profile) {
       // Responder o cliente com os dados do usuário. O status 200 significa OK
@@ -63,20 +66,20 @@ router.get("/patient-info", isAuthenticated, attachCurrentUser, (req, res) => {
 
 //PATCH - editar um perfil
 router.patch(
-  "/patient-info/update",
+  "/doctor-info/update",
   isAuthenticated,
   attachCurrentUser,
   async (req, res) => {
     try {
       const loggedInUser = req.currentUser[1];
 
-      if (loggedInUser.role === "DOCTOR") {
-        //verifica se o usuário é paciente mesmo
-        return res.status(400).json({ msg: "Esse usuário não é paciente." });
+      if (loggedInUser.role === "PATIENT") {
+        //verifica se o usuário é médico mesmo
+        return res.status(400).json({ msg: "Esse usuário não é médico." });
       }
 
       if (loggedInUser) {
-        const response = await PatientProfileModel.findOneAndUpdate(
+        const response = await DoctorProfileModel.findOneAndUpdate(
           { userId: loggedInUser._id },
           { $set: req.body },
           { new: true, runValidation: true }

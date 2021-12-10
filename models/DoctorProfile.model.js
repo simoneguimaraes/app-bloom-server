@@ -34,7 +34,7 @@ const DoctorProfileSchema = new Schema({
     type: Number,
     required: true,
   },
-  tags: {
+  tags: [{
     type: String,
     enum: [
       "Doença Degenerativa",
@@ -51,7 +51,7 @@ const DoctorProfileSchema = new Schema({
     ],
     required: true,
     default: "Outro",
-  },
+  }],
   userId: { type: Schema.Types.ObjectId, ref: "User" } 
 });
 
