@@ -7,8 +7,18 @@ const ArticleSchema = new Schema({
     required: true,
     trim: true,
   },
-  crmDoctor: {
+  authors: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  yearPublished: {
     type: Number,
+    trim: true,
+    required: true,
+  },
+  websiteLink: {
+    type: String,
     trim: true,
     required: true,
   },
