@@ -13,6 +13,7 @@ app.use(morgan("dev"));
 const doctorRouter = require("./routes/doctor.routes");
 const patientRouter = require("./routes/patient.routes");
 const userRouter = require("./routes/user.routes");
+const articleRouter = require("./routes/article.routes");
 
 // const formRouter = require("./routes/form.routes")
 
