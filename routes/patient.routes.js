@@ -41,7 +41,7 @@ router.post(
       return res.status(500).json({ msg: JSON.stringify(err) });
     }
   }
-);
+)
 
 //GET - ver o perfil do paciente
 router.get("/patient-info", isAuthenticated, attachCurrentUser, (req, res) => {
