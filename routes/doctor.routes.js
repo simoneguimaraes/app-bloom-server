@@ -18,8 +18,8 @@ router.post(
   async (req, res) => {
     try {
       const [profile, user] = req.currentUser;
-      if (loggedInUser.role === "PATIENT") {
-        //verifica se o usuário é paciente mesmo
+      if (user.role === "PATIENT") {
+        //verifica se o usuário é médico mesmo
         return res.status(400).json({ msg: "Esse usuário não é médico." });
       }
       const foundProfile = await DoctorProfileModel.findOne({
@@ -43,7 +43,7 @@ router.post(
   }
 );
 
-//GET - ver o perfil do paciente
+//GET - ver o perfil do médico
 router.get("/doctor-info", isAuthenticated, attachCurrentUser, (req, res) => {
   try {
     // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
