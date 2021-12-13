@@ -12,7 +12,7 @@ const ArticleModel = require("../models/Article.model");
 //CRUD
 //POST - criar um post
 router.post(
-  "/article/create",
+  "/articles/create",
   isAuthenticated,
   attachCurrentUser,
   isDoctor,
@@ -34,9 +34,34 @@ router.post(
     }
   }
 );
+
+//GET - mostrar os artigos
+router.get(
+  "/articles",
+  isAuthenticated,
+  attachCurrentUser,
+  async (req, res) => {
+    try {
+      // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
+      const [profile, loggedInUser] = req.currentUser;
+
+      if (loggedInUser && profile) {
+        const articles = await ArticleModel.find();
+        // Responder o cliente com os dados do usuário. O status 200 significa OK
+        return res.status(200).json(articles);
+      } else {
+        return res.status(404).json({ msg: "No article was found." });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
 //UDPATE - editar um post
 router.patch(
-  "/:articleId/update",
+  "articles/update/:articleId",
   isAuthenticated,
   attachCurrentUser,
   isDoctor,
@@ -62,26 +87,28 @@ router.patch(
   }
 );
 
-//GET - mostrar os artigos
-//GET - mostrar os posts
-router.get("/articles", isAuthenticated, attachCurrentUser, async (req, res) => {
-  try {
-    // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
-    const [profile, loggedInUser] = req.currentUser;
-
-    if (loggedInUser && profile) {
-      const articles = await ForumModel.find();
-      // Responder o cliente com os dados do usuário. O status 200 significa OK
-      return res.status(200).json(articles);
-    } else {
-      return res.status(404).json({ msg: "No article was found." });
-    }
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ msg: JSON.stringify(err) });
-  }
-});
-
 //DELETE - deletar o artigo
+router.delete(
+  "articles/delete/:articleId",
+  isAuthenticated,
+  attachCurrentUser,
+  isDoctor,
+  async (req, res) => {
+    try {
+      const result = await ArticleModel.deleteOne({ _id: req.params.id });
+
+      if (result) {
+        return res
+          .status(200)
+          .json({ message: "Article deleted successfully." });
+      }
+
+      return res.status(404).json({ msg: "Article not found." });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
+  }
+);
 
 module.exports = router;
