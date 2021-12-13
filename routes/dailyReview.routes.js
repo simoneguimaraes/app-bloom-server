@@ -3,9 +3,10 @@ const bcrypt = require("bcryptjs");
 const generateToken = require("../config/jwt.config");
 const isAuthenticated = require("../middlewares/isAuthenticated");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
+const isPatient = require("../middlewares/isPatient");
+
 const uploader = require("../config/cloudinary.config");
 const salt_rounds = 10;
-
 const UserModel = require("../models/User.model");
 const PatientDailyReviewModel = require("../models/PatientDailyReview.model");
 
@@ -15,6 +16,7 @@ router.post(
   "/daily/create",
   isAuthenticated,
   attachCurrentUser,
+  isPatient,
   async (req, res) => {
     7;
     try {
