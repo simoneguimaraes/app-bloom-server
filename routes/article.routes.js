@@ -1,192 +1,87 @@
-const express = require("express");
-const router = express.Router();
-
-const ArticleModel = require("../models/Article.model");
-const Model = require("../models/User.model");
-
+const router = require("express").Router();
+const bcrypt = require("bcryptjs");
+const generateToken = require("../config/jwt.config");
 const isAuthenticated = require("../middlewares/isAuthenticated");
-const DoctorProfileModel = require("../models/DoctorProfile.model");
+const attachCurrentUser = require("../middlewares/attachCurrentUser");
+const isDoctor = require("../middlewares/isDoctor");
+const uploader = require("../config/cloudinary.config");
+const salt_rounds = 10;
+const UserModel = require("../models/User.model");
+const ArticleModel = require("../models/Article.model");
 
-// Criar artigo
+//CRUD
+//POST - criar um post
 router.post(
-  "/:contentType/:contentId/add-article",
+  "/article/create",
   isAuthenticated,
   attachCurrentUser,
-  async (req, res, next) => {
+  isDoctor,
+  async (req, res) => {
     try {
-      const loggedInUser = req.currentUser;
-
-      const newArticle = await ArticleModel.create({
+      const [profile, user] = req.currentUser;
+      if (user.role === "PATIENT") {
+        //verifica se o usuário é paciente mesmo
+        return res.status(400).json({ msg: "Esse usuário não é médico." });
+      }
+      const article = await ArticleModel.create({
         ...req.body,
-        ...req.params,
-        commentCreator: loggedInUser._id,
-        commentId: Date.now().toString(),
       });
-
-      await DoctorProfileModel.findOneAndUpdate(
-        { _id: loggedInUser._id },
-        {
-          $push: {
-            userArticle: newArticle._id,
-          },
-        }
-      );
-
-      return res.status(201).json(newArticle);
+      return res.status(201).json(article);
     } catch (err) {
-      next(err);
+      console.error(err);
+      // O status 500 signfica Internal Server Error
+      return res.status(500).json({ msg: JSON.stringify(err) });
     }
   }
 );
-
-// Exibir ARTIGO por conteúdo (R)
-
-router.get(
-  "/:contentType/:contentId/contentArticle",
+//UDPATE - editar um post
+router.patch(
+  "/:articleId/update",
   isAuthenticated,
   attachCurrentUser,
-
-  async (req, res, next) => {
+  isDoctor,
+  async (req, res) => {
     try {
-      const { contentType, contentId } = req.params;
-      const contentArticle = await ArticleModel.find({
-        contentType: contentType,
-        contentId: contentId,
-      }).populate("articleCreator");
-      return res.status(200).json(contentComments);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
-
-//Exibir um artigo (R)
-
-router.get(
-  "/:articleId/show-article",
-  isAuthenticated,
-  attachCurrentUser,
-  async (req, res, next) => {
-    try {
-      const { articleId } = req.params;
-
-      const showArticle = await ArticleModel.findOne({ _id: articleId });
-
-      if (showArticle) {
-        return res.status(200).json(showArticle);
+      const [profile, user] = req.currentUser;
+      if (user.role === "PATIENT") {
+        //verifica se o usuário é paciente mesmo
+        return res.status(400).json({ msg: "Esse usuário não é médico." });
       }
-      return res.status(400).json({ error: "Artigo não encontrado" });
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-// Editar um artigo (U)
-router.put(
-  "/:articleId/edit-article",
-  isAuthenticated,
-  attachCurrentUser,
-
-  async (req, res, next) => {
-    try {
       const { articleId } = req.params;
-
-      const updatedArticle = await ArticleModel.findOneAndUpdate(
+      const response = await ArticleModel.findOneAndUpdate(
         { _id: articleId },
-        { $set: { ...req.body } }
+        { $set: req.body },
+        { new: true, runValidation: true }
       );
-
-      if (updatedArticle) {
-        return res.status(200).json(updatedArticle);
-      }
-      return res.status(400).json({ error: "Artigo não encontrado" });
+      return res.status(201).json(response);
     } catch (err) {
-      next(err);
+      console.error(err);
+      // O status 500 signfica Internal Server Error
+      return res.status(500).json({ msg: JSON.stringify(err) });
     }
   }
 );
 
-// Exibir artigo por usuario
+//GET - mostrar os artigos
+//GET - mostrar os posts
+router.get("/articles", isAuthenticated, attachCurrentUser, async (req, res) => {
+  try {
+    // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
+    const [profile, loggedInUser] = req.currentUser;
 
-router.get(
-  "/DoctorProfile/userArticle",
-  isAuthenticated,
-  attachCurrentUser,
-
-  async (req, res, next) => {
-    try {
-      const loggedInUser = req.currentUser;
-      const contentArticle = await ArticleModel.find({
-        articleCreator: loggedInUser._id,
-      });
-      return res.status(200).json(contentArticle);
-    } catch (error) {
-      next(error);
+    if (loggedInUser && profile) {
+      const articles = await ForumModel.find();
+      // Responder o cliente com os dados do usuário. O status 200 significa OK
+      return res.status(200).json(articles);
+    } else {
+      return res.status(404).json({ msg: "No article was found." });
     }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: JSON.stringify(err) });
   }
-);
+});
 
-// Editar um artgio (U)
-router.put(
-  "/:articleId/edit-article",
-  isAuthenticated,
-  attachCurrentUser,
-
-  async (req, res, next) => {
-    try {
-      const { articleId } = req.params;
-
-      const updatedArticle = await ArticleModel.findOneAndUpdate(
-        { _id: articleId },
-        { $set: { ...req.body } }
-      );
-
-      if (updatedArticle) {
-        return res.status(200).json(updatedArticle);
-      }
-      return res.status(400).json({ error: "Artigo não encontrado" });
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-// Deletar um artigo (D)
-router.delete(
-  "/delete-article/:articleId",
-  isAuthenticated,
-  attachCurrentUser,
-
-  async (req, res, next) => {
-    try {
-      const { articleId } = req.params;
-      const loggedInUser = req.currentUser;
-
-      const deletionResult = await ArticleModel.deleteOne({ _id: articleId });
-      if (deletionResult.n > 0) {
-        const updatedUser = await UserModel.findOneAndUpdate(
-          { _id: loggedInUser._id },
-          {
-            $pull: {
-              userArticle: articleId,
-            },
-          }
-        );
-
-        if (updatedUser) {
-          return res.status(200).json({});
-        }
-        return res.status(404).json({
-          error:
-            "Não foi possível deletar o artigo, pois o usuario não foi encontrado.",
-        });
-      }
-      return res.status(404).json({ error: "Artigo não encontrado" });
-    } catch (err) {
-      next(err);
-    }
-  }
-);
+//DELETE - deletar o artigo
 
 module.exports = router;

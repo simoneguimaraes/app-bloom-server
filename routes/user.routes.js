@@ -95,24 +95,38 @@ router.delete(
   attachCurrentUser,
   async (req, res) => {
     try {
-      if (req.currentUser.role === "PATIENT") {
-        const user = await UserModel.deleteOne({ _id: req.currentUser[1] });
-        const profile = await PatientProfileModel.deleteOne({
-          _id: req.currentUser,
+      const [profile, user] = req.currentUser;
+      console.log(profile, user)
+      if (user.role === "PATIENT") {
+        const findedUser = await UserModel.deleteOne({ _id: user._id });
+        const findedProfile = await PatientProfileModel.deleteOne({
+          userId: user._id,
         });
-      } else if (req.currentUser.role === "DOCTOR") {
-        const user = await UserModel.deleteOne({ _id: req.currentUser[1] });
-        const profile = await DoctorProfileModel.deleteOne({
-          _id: req.currentUser,
+
+        if (findedUser && findedProfile) {
+          // Responder o cliente com os dados do usuário. O status 200 significa OK
+          return res.status(200).json({ msg: "Conta deletada com sucesso." });
+        }
+
+      } else if (user.role === "DOCTOR") {
+        const findedUser = await UserModel.deleteOne({ _id: user._id });
+        const findedProfile = await DoctorProfileModel.deleteOne({
+          userId: user._id,
         });
+
+        if (findedUser && findedProfile) {
+          // Responder o cliente com os dados do usuário. O status 200 significa OK
+          return res.status(200).json({ msg: "Conta deletada com sucesso." });
+        }
+
       }
 
-      if (user && profile) {
-        // Responder o cliente com os dados do usuário. O status 200 significa OK
-        return res.status(200).json({ msg: "Conta deletada com sucesso." });
-      } else {
-        return res.status(404).json({ msg: "Usuário não encontrado" });
-      }
+      // if (findedUser && findedProfile) {
+      //   // Responder o cliente com os dados do usuário. O status 200 significa OK
+      //   return res.status(200).json({ msg: "Conta deletada com sucesso." });
+      // } else {
+      //   return res.status(404).json({ msg: "Usuário não encontrado" });
+      // }
     } catch (err) {
       console.error(err);
       return res.status(500).json({ msg: JSON.stringify(err) });

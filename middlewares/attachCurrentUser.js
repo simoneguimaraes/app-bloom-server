@@ -18,18 +18,16 @@ module.exports = async (req, res, next) => {
     }
 
     if (user.role === "DOCTOR") {
-      const doctorUser = await DoctorProfileModel.findOne(
-        { userId: loggedInUser._id },
-        { passwordHash: 0, __v: 0 }
-      );
+      const doctorUser = await DoctorProfileModel.findOne({
+        userId: loggedInUser._id,
+      });
 
       req.currentUser = [doctorUser, user];
     } else if (user.role === "PATIENT") {
-      const patientUser = await PatientProfileModel.findOne(
-        { userId: loggedInUser._id },
-        { passwordHash: 0, __v: 0 }
-      );
-        console.log(patientUser)
+      const patientUser = await PatientProfileModel.findOne({
+        userId: loggedInUser._id,
+      });
+
       req.currentUser = [patientUser, user];
     }
 
