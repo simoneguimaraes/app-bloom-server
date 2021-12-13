@@ -12,3 +12,9 @@ module.exports = function generateToken(user) {
     expiresIn: expiration,
   });
 };
+
+
+// o JWT tem duas funções:
+
+// 1. Persistir o login do usuário (ou seja, não necessitar que o usuário faça loggin pra cada rota protegida que ele tentar acessar)
+// 2. Garantir um login prévio: a única forma do usuario ter um jwt válido é tendo feito login previamente no nosso servidor

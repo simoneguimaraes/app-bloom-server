@@ -14,6 +14,7 @@ const doctorRouter = require("./routes/doctor.routes");
 const patientRouter = require("./routes/patient.routes");
 const articleRouter = require("./routes/article.routes");
 const userRouter = require("./routes/user.routes");
+const articleRouter = require("./routes/article.routes");
 
 // const formRouter = require("./routes/form.routes")
 
