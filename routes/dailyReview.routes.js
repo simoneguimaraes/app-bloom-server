@@ -6,10 +6,10 @@ const attachCurrentUser = require("../middlewares/attachCurrentUser");
 const uploader = require("../config/cloudinary.config");
 const salt_rounds = 10;
 const UserModel = require("../models/User.model");
-const ArticleModel = require("../models/PatientDailyReview.model");
+const PatientDailyReviewModel = require("../models/PatientDailyReview.model");
 
 //CRUD
-//POST - criar um daily
+//POST - criar um daily review
 router.post(
   "/dailyReview/create",
   isAuthenticated,
@@ -17,10 +17,10 @@ router.post(
   async (req, res) => {
     try {
       const [profile, user] = req.currentUser;
-      const article = await dailyReview.create({
+      const daily = await dailyReview.create({
         ...req.body,
       });
-      return res.status(201).json(review);
+      return res.status(201).json(daily);
     } catch (err) {
       console.error(err);
       // O status 500 signfica Internal Server Error
@@ -28,7 +28,9 @@ router.post(
     }
   }
 );
-//UDPATE - editar um post
+
+//UDPATE - editar um daily review
+
 router.patch(
   "/:articleId/update",
   isAuthenticated,
@@ -49,5 +51,5 @@ router.patch(
     }
   }
 );
-//DELETE - deletar um post
+
 module.exports = router;

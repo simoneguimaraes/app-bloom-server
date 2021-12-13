@@ -14,22 +14,18 @@ const userRouter = require("./routes/user.routes");
 const doctorRouter = require("./routes/doctor.routes");
 const patientRouter = require("./routes/patient.routes");
 const articleRouter = require("./routes/article.routes");
-
-const userRouter = require("./routes/user.routes");
-
-
-// const formRouter = require("./routes/form.routes")
-
+const forumRouter = require("./routes/forum.routes");
+const dailyReviewRouter = require("./routes/dailyReview.routes");
 
 app.use(cors({ origin: process.env.REACT_APP_URL }));
 
-// Estamos prefixando todos os endpoinst da nossa API com a palavra "api" e uma versão.
-
+// Estamos prefixando todos os endpoinst da nossa API com a palavra "api"
 app.use(`/api`, doctorRouter);
 app.use(`/api`, userRouter);
 app.use(`/api`, patientRouter);
 app.use(`/api`, articleRouter);
 app.use(`/api`, forumRouter);
+app.use(`/api`, dailyReviewRouter);
 
 //escutar requisições em uma porta específica
 app.listen(Number(process.env.PORT), () =>
