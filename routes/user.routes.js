@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 
 const UserModel = require("../models/User.model");
 const PatientProfileModel = require("../models/PatientProfile.model");
+const DoctorProfileModel = require("../models/PatientProfile.model");
 
 const generateToken = require("../config/jwt.config");
 const isAuthenticated = require("../middlewares/isAuthenticated");
@@ -96,7 +97,7 @@ router.delete(
   async (req, res) => {
     try {
       const [profile, user] = req.currentUser;
-      console.log(profile, user)
+      console.log(profile, user);
       if (user.role === "PATIENT") {
         const findedUser = await UserModel.deleteOne({ _id: user._id });
         const findedProfile = await PatientProfileModel.deleteOne({
@@ -107,7 +108,6 @@ router.delete(
           // Responder o cliente com os dados do usuário. O status 200 significa OK
           return res.status(200).json({ msg: "Conta deletada com sucesso." });
         }
-
       } else if (user.role === "DOCTOR") {
         const findedUser = await UserModel.deleteOne({ _id: user._id });
         const findedProfile = await DoctorProfileModel.deleteOne({
@@ -118,7 +118,6 @@ router.delete(
           // Responder o cliente com os dados do usuário. O status 200 significa OK
           return res.status(200).json({ msg: "Conta deletada com sucesso." });
         }
-
       }
 
       // if (findedUser && findedProfile) {
