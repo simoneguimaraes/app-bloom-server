@@ -61,7 +61,7 @@ router.get(
 
 //UDPATE - editar um post
 router.patch(
-  "articles/update/:articleId",
+  "/articles/update/:articleId",
   isAuthenticated,
   attachCurrentUser,
   isDoctor,
@@ -89,13 +89,15 @@ router.patch(
 
 //DELETE - deletar o artigo
 router.delete(
-  "articles/delete/:articleId",
+  "/articles/delete/:articleId",
   isAuthenticated,
   attachCurrentUser,
   isDoctor,
   async (req, res) => {
     try {
-      const result = await ArticleModel.deleteOne({ _id: req.params.id });
+      const result = await ArticleModel.deleteOne({
+        _id: req.params.articleId,
+      });
 
       if (result) {
         return res
