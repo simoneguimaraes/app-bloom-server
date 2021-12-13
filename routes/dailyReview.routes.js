@@ -16,7 +16,7 @@ router.post(
   "/daily/create",
   isAuthenticated,
   attachCurrentUser,
-  is
+  isPatient,
   async (req, res) => {
     7;
     try {

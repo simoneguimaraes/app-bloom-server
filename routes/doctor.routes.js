@@ -2,6 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const generateToken = require("../config/jwt.config");
 const isAuthenticated = require("../middlewares/isAuthenticated");
+const isDoctor = require("../middlewares/isDoctor");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
 const uploader = require("../config/cloudinary.config");
 
@@ -70,6 +71,7 @@ router.patch(
   "/doctor-info/update",
   isAuthenticated,
   attachCurrentUser,
+  isDoctor,
   async (req, res) => {
     try {
       const loggedInUser = req.currentUser[1];
