@@ -14,10 +14,11 @@ router.post(
   "/forum/create",
   isAuthenticated,
   attachCurrentUser,
-  async (req, res) => {7
+  async (req, res) => {
+    7;
     try {
       const [profile, user] = req.currentUser;
-      
+
       const postForum = await ForumModel.create({
         ...req.body,
       });
@@ -31,28 +32,27 @@ router.post(
 );
 
 //GET - mostrar os posts
-router.get("/forum", isAuthenticated, attachCurrentUser, (req, res) => {
-    try {
-
+router.get("/forum", isAuthenticated, attachCurrentUser, async (req, res) => {
+  try {
     // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
-      const [profile, loggedInUser] = req.currentUser;
-      
-      if (loggedInUser && profile) {
-        const forumPosts = await ForumModel.find()
-        // Responder o cliente com os dados do usuário. O status 200 significa OK
-        return res.status(200).json(forumPosts);
-      } else {
-        return res.status(404).json({ msg: "Post not found." });
-      }
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ msg: JSON.stringify(err) });
+    const [profile, loggedInUser] = req.currentUser;
+
+    if (loggedInUser && profile) {
+      const forumPosts = await ForumModel.find();
+      // Responder o cliente com os dados do usuário. O status 200 significa OK
+      return res.status(200).json(forumPosts);
+    } else {
+      return res.status(404).json({ msg: "No post was found." });
     }
-  });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: JSON.stringify(err) });
+  }
+});
 
 //UDPATE - editar um post
 router.patch(
-  "/:forumId/update",
+  "/update/:forumId",
   isAuthenticated,
   attachCurrentUser,
   async (req, res) => {
@@ -77,18 +77,18 @@ router.patch(
 //DELETE - deletar o post
 
 router.delete(
-  "/:forumId",
+  "/delete/:forumId",
   isAuthenticated,
   attachCurrentUser,
   async (req, res) => {
     try {
       const result = await ForumModel.deleteOne({ _id: req.params.id });
 
-      if (result.deletedCount < 1) {
-        return res.status(404).json({ msg: "Post not found." });
+      if (result) {
+        return res.status(200).json({ message: "Post deleted successfully." });
       }
 
-      res.status(200).json({ message: "Post deleted successfully." });
+      return res.status(404).json({ msg: "Post not found." });
     } catch (err) {
       console.log(err);
       res.status(500).json(err);

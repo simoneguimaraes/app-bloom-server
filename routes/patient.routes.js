@@ -18,7 +18,7 @@ router.post(
   async (req, res) => {
     try {
       const [profile, user] = req.currentUser;
-      if (loggedInUser.role === "DOCTOR") {
+      if (user.role === "DOCTOR") {
         //verifica se o usuário é paciente mesmo
         return res.status(400).json({ msg: "Esse usuário não é paciente." });
       }
@@ -41,7 +41,7 @@ router.post(
       return res.status(500).json({ msg: JSON.stringify(err) });
     }
   }
-)
+);
 
 //GET - ver o perfil do paciente
 router.get("/patient-info", isAuthenticated, attachCurrentUser, (req, res) => {
