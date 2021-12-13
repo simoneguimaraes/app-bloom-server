@@ -14,7 +14,12 @@ const userRouter = require("./routes/user.routes");
 const doctorRouter = require("./routes/doctor.routes");
 const patientRouter = require("./routes/patient.routes");
 const articleRouter = require("./routes/article.routes");
-const forumRouter = require("./routes/forum.routes");
+
+const userRouter = require("./routes/user.routes");
+
+
+// const formRouter = require("./routes/form.routes")
+
 
 app.use(cors({ origin: process.env.REACT_APP_URL }));
 
