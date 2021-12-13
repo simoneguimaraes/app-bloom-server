@@ -9,7 +9,7 @@ const UserModel = require("../models/User.model");
 const ArticleModel = require("../models/PatientDailyReview.model");
 
 //CRUD
-//POST - criar um post
+//POST - criar um daily
 router.post(
   "/dailyReview/create",
   isAuthenticated,
