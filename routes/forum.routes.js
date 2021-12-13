@@ -5,6 +5,7 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
 const uploader = require("../config/cloudinary.config");
 const salt_rounds = 10;
+
 const UserModel = require("../models/User.model");
 const ForumModel = require("../models/Forum.model");
 
