@@ -89,6 +89,37 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.delete(
+  "/profile/delete",
+  isAuthenticated,
+  attachCurrentUser,
+  async (req, res) => {
+    try {
+      if (req.currentUser.role === "PATIENT") {
+        const user = await UserModel.deleteOne({ _id: req.currentUser[1] });
+        const profile = await PatientProfileModel.deleteOne({
+          _id: req.currentUser,
+        });
+      } else if (req.currentUser.role === "DOCTOR") {
+        const user = await UserModel.deleteOne({ _id: req.currentUser[1] });
+        const profile = await DoctorProfileModel.deleteOne({
+          _id: req.currentUser,
+        });
+      }
+
+      if (user && profile) {
+        // Responder o cliente com os dados do usuário. O status 200 significa OK
+        return res.status(200).json({ msg: "Conta deletada com sucesso." });
+      } else {
+        return res.status(404).json({ msg: "Usuário não encontrado" });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
 // cRud (READ) - HTTP GET
 // Buscar dados do usuário
 //estamos usando as rotas de patient e doctor separadas
@@ -136,36 +167,5 @@ router.post("/login", async (req, res) => {
 //     }
 //   }
 // );
-
-router.delete(
-  "/profile/delete",
-  isAuthenticated,
-  attachCurrentUser,
-  async (req, res) => {
-    try {
-      if (req.currentUser.role === "PATIENT") {
-        const user = await UserModel.deleteOne({ _id: req.currentUser[1] });
-        const profile = await PatientProfileModel.deleteOne({
-          _id: req.currentUser,
-        });
-      } else if (req.currentUser.role === "DOCTOR") {
-        const user = await UserModel.deleteOne({ _id: req.currentUser[1] });
-        const profile = await DoctorProfileModel.deleteOne({
-          _id: req.currentUser,
-        });
-      }
-
-      if (user && profile) {
-        // Responder o cliente com os dados do usuário. O status 200 significa OK
-        return res.status(200).json({ msg: "Conta deletada com sucesso." });
-      } else {
-        return res.status(404).json({ msg: "Usuário não encontrado" });
-      }
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ msg: JSON.stringify(err) });
-    }
-  }
-);
 
 module.exports = router;
