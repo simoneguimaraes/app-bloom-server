@@ -27,4 +27,4 @@ const ArticleSchema = new Schema({
   
   module.exports = articleModel;
 
-  
+
