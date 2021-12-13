@@ -9,6 +9,7 @@ const salt_rounds = 10;
 
 const UserModel = require("../models/User.model");
 const PatientProfileModel = require("../models/PatientProfile.model");
+
 // Crud - HTTP POST
 //POST - criar um perfil
 router.post(
