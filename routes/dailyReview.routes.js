@@ -18,7 +18,6 @@ router.post(
   attachCurrentUser,
   isPatient,
   async (req, res) => {
-    7;
     try {
       const [profile, user] = req.currentUser;
 
