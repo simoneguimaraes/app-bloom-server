@@ -5,6 +5,7 @@ const ForumSchema = new Schema({
     type: String,
     required: true,
     trim: true,
+    maxLength: 255,
   },
   websiteLink: {
     type: String,
