@@ -16,12 +16,12 @@ router.post(
   isAuthenticated,
   attachCurrentUser,
   async (req, res) => {
-    7;
     try {
       const [profile, user] = req.currentUser;
 
       const postForum = await ForumModel.create({
         ...req.body,
+        userId: user._id
       });
       return res.status(201).json(postForum);
     } catch (err) {
@@ -38,7 +38,7 @@ router.get("/forum", isAuthenticated, attachCurrentUser, async (req, res) => {
     // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
     const [profile, loggedInUser] = req.currentUser;
 
-    if (loggedInUser && profile) {
+    if (loggedInUser) {
       const forumPosts = await ForumModel.find();
       // Responder o cliente com os dados do usuário. O status 200 significa OK
       return res.status(200).json(forumPosts);

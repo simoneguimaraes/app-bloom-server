@@ -10,13 +10,11 @@ const ForumSchema = new Schema({
   websiteLink: {
     type: String,
     trim: true,
-    required: true,
   },
-  pictures: {
-    type: String,
-    trim: true,
-    required: true,
-  },
+  // pictures: {
+  //   type: String,
+  //   trim: true,
+  // },
   tags: [
     {
       type: String,
@@ -33,7 +31,6 @@ const ForumSchema = new Schema({
         "Depressão",
         "Outro",
       ],
-      required: true,
       default: "Outro",
     },
   ],

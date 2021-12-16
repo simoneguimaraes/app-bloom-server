@@ -50,7 +50,6 @@ const PatientProfileSchema = new Schema({
       "Ainda não iniciei o tratamento",
     ],
     default: "Todos os dias",
-    required: true,
   },
   sleepHours: {
     type: Number,
@@ -62,12 +61,6 @@ const PatientProfileSchema = new Schema({
   },
   profession: {
     type: String,
-    required: true,
-  },
-  acceptedTerms: {
-    type: Boolean,
-    default: false,
-    required: true,
   },
   userId: { type: Schema.Types.ObjectId, ref: "User" },
 });

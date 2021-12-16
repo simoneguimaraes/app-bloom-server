@@ -45,7 +45,7 @@ router.post(
   }
 );
 
-//GET - ver o perfil do médico
+//GET - ver o perfil do médico (token)
 router.get("/doctor-info", isAuthenticated, attachCurrentUser, (req, res) => {
   try {
     // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
@@ -66,6 +66,19 @@ router.get("/doctor-info", isAuthenticated, attachCurrentUser, (req, res) => {
   }
 });
 
+//GET - ver o perfil de todos os médicos
+router.get("/doctor-info/doctors", async (req, res, next) => {
+  try {
+    const result = await DoctorProfileModel.find().populate({
+      path: "userId",
+      model: "User",
+    });
+    const result2 = await UserModel.find();
+    return res.status(200).json(result);
+  } catch (err) {
+    return next(err);
+  }
+});
 //PATCH - editar um perfil
 router.patch(
   "/doctor-info/update",

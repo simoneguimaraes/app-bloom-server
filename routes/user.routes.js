@@ -83,8 +83,14 @@ router.post("/login", async (req, res) => {
     }
 
     const token = generateToken(foundUser);
+    const userWithNoHash = {
+      name: foundUser.name,
+      email: foundUser.email,
+      role: foundUser.role,
+      _id: foundUser._id,
+    };
 
-    res.status(200).json(token);
+    res.status(200).json({ token, user: userWithNoHash });
   } catch (err) {
     console.log(err);
   }
