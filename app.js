@@ -24,13 +24,13 @@ const forumRouter = require("./routes/forumRoutes");
 
 app.use(cors({ origin: process.env.REACT_APP_URL }));
 
-// Estamos prefixando todos os endpoinst da nossa API com a palavra "api" e uma versão.
-
+// Estamos prefixando todos os endpoinst da nossa API com a palavra "api"
 app.use(`/api`, doctorRouter);
 app.use(`/api`, userRouter);
 app.use(`/api`, patientRouter);
 app.use(`/api`, articleRouter);
 app.use(`/api`, forumRouter);
+app.use(`/api`, dailyReviewRouter);
 
 //escutar requisições em uma porta específica
 app.listen(Number(process.env.PORT), () =>

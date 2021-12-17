@@ -5,6 +5,7 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
 const uploader = require("../config/cloudinary.config");
 const salt_rounds = 10;
+
 const UserModel = require("../models/User.model");
 const ForumModel = require("../models/Forum.model");
 
@@ -52,7 +53,7 @@ router.get("/forum", isAuthenticated, attachCurrentUser, async (req, res) => {
 
 //UDPATE - editar um post
 router.patch(
-  "/update/:forumId",
+  "/forum/update/:forumId",
   isAuthenticated,
   attachCurrentUser,
   async (req, res) => {
@@ -77,12 +78,12 @@ router.patch(
 //DELETE - deletar o post
 
 router.delete(
-  "/delete/:forumId",
+  "/forum/delete/:forumId",
   isAuthenticated,
   attachCurrentUser,
   async (req, res) => {
     try {
-      const result = await ForumModel.deleteOne({ _id: req.params.id });
+      const result = await ForumModel.deleteOne({ _id: req.params.forumId });
 
       if (result) {
         return res.status(200).json({ message: "Post deleted successfully." });

@@ -2,6 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const generateToken = require("../config/jwt.config");
 const isAuthenticated = require("../middlewares/isAuthenticated");
+const isDoctor = require("../middlewares/isDoctor");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
 const uploader = require("../config/cloudinary.config");
 
@@ -9,6 +10,7 @@ const salt_rounds = 10;
 
 const UserModel = require("../models/User.model");
 const DoctorProfileModel = require("../models/DoctorProfile.model");
+
 // Crud - HTTP POST
 //POST - criar um perfil
 router.post(
@@ -69,6 +71,7 @@ router.patch(
   "/doctor-info/update",
   isAuthenticated,
   attachCurrentUser,
+  isDoctor,
   async (req, res) => {
     try {
       const loggedInUser = req.currentUser[1];
