@@ -59,6 +59,29 @@ router.get(
   }
 );
 
+router.get(
+  "/articles/:doctorId",
+  isAuthenticated,
+  attachCurrentUser,
+  async (req, res) => {
+    try {
+      // Buscar o usuário logado que está disponível através do middleware attachCurrentUser
+      const [profile, loggedInUser] = req.currentUser;
+
+      if (loggedInUser && profile) {
+        const articles = await ArticleModel.find({_id:req.params.doctorId});
+        // Responder o cliente com os dados do usuário. O status 200 significa OK
+        return res.status(200).json(articles);
+      } else {
+        return res.status(404).json({ msg: "No doctor was found." });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: JSON.stringify(err) });
+    }
+  }
+);
+
 //UDPATE - editar um post
 router.patch(
   "articles/update/:articleId",

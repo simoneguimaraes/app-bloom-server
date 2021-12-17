@@ -10,12 +10,13 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // Ligar os roteadores nas instâncias do Express
-const userRouter = require("./routes/user.routes");
-const doctorRouter = require("./routes/doctor.routes");
-const patientRouter = require("./routes/patient.routes");
-const articleRouter = require("./routes/article.routes");
+const userRouter = require("./routes/userRoutes");
+const doctorRouter = require("./routes/doctorRoutes");
+const patientRouter = require("./routes/patientRoutes");
+const articleRouter = require("./routes/articleRoutes");
+const forumRouter = require("./routes/forumRoutes");
 
-const userRouter = require("./routes/user.routes");
+
 
 
 // const formRouter = require("./routes/form.routes")

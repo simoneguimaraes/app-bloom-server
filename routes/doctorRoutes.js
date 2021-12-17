@@ -92,7 +92,31 @@ router.patch(
       console.error(err);
       return res.status(500).json({ msg: JSON.stringify(err) });
     }
+
   }
+
+  
 );
+
+router.get("/doctor/:id", async (req, res) => {
+  try {
+    // Buscar as informações no banco
+    const doctorProfile = await DoctorProfileModel.findOne({ _id: req.params.id }).populate({
+      path: "userId",
+      model: "User"
+    });
+
+    // Verificar se o banco encontrou o medico
+    if (!doctorProfile) {
+      return res.status(404).json({ msg: "Médico não encontrado." });
+    }
+
+    // Responder a requisição
+    res.status(200).json(doctorProfile);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
 
 module.exports = router;
